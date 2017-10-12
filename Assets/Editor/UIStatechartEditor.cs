@@ -40,6 +40,7 @@ public class UIStatechartEditor : EditorWindow {
         //{
         //}
 
+        var e = Event.current;
         int border = 0;
         canvasWindowSize = new Rect(border, border, position.width - border * 2, position.height - border * 2);
         canvasSize = new Rect(0, 0, 1000, 1000);
@@ -57,6 +58,11 @@ public class UIStatechartEditor : EditorWindow {
             EndWindows();
 
         GUI.EndScrollView();
+
+        if (e.isMouse && e.button == 1)
+        {
+            ContextMenu();
+        }
     }
 
     void DrawCanvasDotGrid()
@@ -77,16 +83,31 @@ public class UIStatechartEditor : EditorWindow {
 
     void DrawNodeWindow(int id)
     {
-        GUI.Button(new Rect(10, 20, 100, 20), "Can't drag me");
         GUI.DragWindow();
+
+        GUI.Button(new Rect(10, 20, 100, 20), "Can't drag me");
     }
 
     void DrawNodeCurve(Rect start, Rect end)
     {
         Vector3 startPos = new Vector3(start.x + start.width, start.y + start.height / 2, 0);
-        Vector3 endPos = new Vector3(end.x, end.y + end.height / 2, 0);
+        Vector3 endPos = new Vector3(end.x, end.y + 8, 0);
         Vector3 startTan = startPos + Vector3.right * 50;
         Vector3 endTan = endPos + Vector3.left * 50;
         Handles.DrawBezier(startPos, endPos, startTan, endTan, Color.black, null, 2);
+    }
+
+    void ContextMenu()
+    {
+        GenericMenu menu = new GenericMenu();
+
+        menu.AddItem(new GUIContent("Add New Statechart"), false, CreateNewStatechartNode, Event.current.mousePosition);
+
+        menu.ShowAsContext();
+    }
+
+    void CreateNewStatechartNode(object position)
+    {
+        window2.position = (Vector2)position;
     }
 }
